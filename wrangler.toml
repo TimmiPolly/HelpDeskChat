@@ -1,0 +1,44 @@
+name = "helpdesk-tester"           # ← Измени на то, что ожидает CI!
+main = "worker.js"
+compatibility_date = "2026-04-10"
+compatibility_flags = ["nodejs_compat"]
+
+# Статические файлы (index.html, app.js, chats.js)
+[assets]
+directory = "./"                   # ← Папка, где лежат index.html / app.js / chats.js
+
+# ── Production ────────────────────────────────────────────────────────────────
+
+# KV для production (если понадобится хранить данные)
+# [[kv_namespaces]]
+# binding   = "HELPDESK_KV"
+# id        = "ЗАМЕНИ_НА_PROD_KV_ID"
+
+# ── Test env ──────────────────────────────────────────────────────────────────
+
+[env.test]
+name = "helpdesk-tester-test"      # ← Или любое другое имя для тест-окружения
+
+[env.test.assets]
+directory = "./"
+
+# [[env.test.kv_namespaces]]
+# binding   = "HELPDESK_KV"
+# id        = "ЗАМЕНИ_НА_TEST_KV_ID"
+
+# ── Observability ─────────────────────────────────────────────────────────────
+
+[observability]
+enabled = false
+head_sampling_rate = 1
+
+[observability.logs]
+enabled          = true
+head_sampling_rate = 1
+persist          = true
+invocation_logs  = true
+
+[observability.traces]
+enabled            = false
+persist            = true
+head_sampling_rate = 1
