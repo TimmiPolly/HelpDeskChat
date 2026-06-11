@@ -42,13 +42,7 @@
 
 Результат публикуется в глобальную переменную `window.helpdeskUser`:
 
-```js
-window.helpdeskUser = {
-  id:        "test_1718000000000_x7k3m",
-  name:      "Тестировщик",
-  email:     "test_test_1718…@helpdesk.test",
-  createdAt: 1718000000,   // unix-timestamp
-}
+
 ```
 
 Все скрипты чатов берут данные отсюда, а не генерируют их самостоятельно.
@@ -159,17 +153,6 @@ location.reload();
 ## Настройка Intercom
 
 В `chats.js` прописан `app_id: "n571sxh5"`. Замените его на ID вашего Intercom-воркспейса:
-
-```js
-window.intercomSettings = {
-  api_base: "https://api-iam.intercom.io",
-  app_id:   "ВАШ_APP_ID",       // ← сюда
-  user_id:  window.helpdeskUser.id,
-  name:     window.helpdeskUser.name,
-  email:    window.helpdeskUser.email,
-  created_at: window.helpdeskUser.createdAt,
-};
-```
 
 App ID находится в Intercom → Settings → Installation → Your app's Intercom code.
 
