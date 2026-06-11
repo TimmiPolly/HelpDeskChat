@@ -3,52 +3,407 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Тестирование чатов</title>
+    <title>Helpdesk Chat Tester</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        * {
+        *, *::before, *::after {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        :root {
+            --bg: #0d0f12;
+            --surface: #151820;
+            --surface-2: #1c2030;
+            --border: rgba(255,255,255,0.07);
+            --border-accent: rgba(99,183,255,0.25);
+            --text-primary: #e8ecf2;
+            --text-secondary: #7a8499;
+            --text-muted: #3d4559;
+            --accent: #4b9eff;
+            --accent-dim: rgba(75,158,255,0.12);
+            --green: #3ecf8e;
+            --green-dim: rgba(62,207,142,0.1);
+            --amber: #f5a623;
+            --mono: 'JetBrains Mono', monospace;
+            --sans: 'Inter', sans-serif;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: var(--sans);
+            background: var(--bg);
+            color: var(--text-primary);
             min-height: 100vh;
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            grid-template-areas: "header" "main" "footer";
+        }
+
+        /* ── Header ── */
+        header {
+            grid-area: header;
+            border-bottom: 1px solid var(--border);
+            padding: 0 32px;
+            height: 56px;
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: space-between;
         }
 
-        .center {
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 28px;
+            height: 28px;
+            background: var(--accent-dim);
+            border: 1px solid var(--border-accent);
+            border-radius: 7px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-icon svg {
+            width: 14px;
+            height: 14px;
+            stroke: var(--accent);
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .logo-name {
+            font-family: var(--mono);
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-primary);
+            letter-spacing: 0.02em;
+        }
+
+        .logo-name span {
+            color: var(--text-muted);
+        }
+
+        .header-badge {
+            font-family: var(--mono);
+            font-size: 11px;
+            color: var(--green);
+            background: var(--green-dim);
+            border: 1px solid rgba(62,207,142,0.2);
+            border-radius: 4px;
+            padding: 3px 8px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--green);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.35; }
+        }
+
+        /* ── Main ── */
+        main {
+            grid-area: main;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 48px 24px;
+            gap: 48px;
+        }
+
+        .hero {
             text-align: center;
+            max-width: 560px;
+        }
+
+        .hero-eyebrow {
+            font-family: var(--mono);
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--accent);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .hero-title {
+            font-size: clamp(28px, 5vw, 44px);
+            font-weight: 500;
+            line-height: 1.15;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .hero-title em {
+            font-style: normal;
+            color: var(--accent);
+        }
+
+        .hero-sub {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.65;
+        }
+
+        /* ── Cards ── */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            width: 100%;
+            max-width: 660px;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
             padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: border-color 0.2s, background 0.2s;
         }
 
-        h1 {
-            font-size: 3rem;
-            color: white;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-            font-weight: 600;
+        .card:hover {
+            border-color: rgba(255,255,255,0.12);
+            background: var(--surface-2);
         }
 
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 1.8rem;
-            }
+        .card-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-icon svg {
+            width: 16px;
+            height: 16px;
+            fill: none;
+            stroke-width: 1.75;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .card-icon.blue { background: var(--accent-dim); }
+        .card-icon.blue svg { stroke: var(--accent); }
+        .card-icon.green { background: var(--green-dim); }
+        .card-icon.green svg { stroke: var(--green); }
+        .card-icon.amber { background: rgba(245,166,35,0.1); }
+        .card-icon.amber svg { stroke: var(--amber); }
+
+        .card-label {
+            font-size: 11px;
+            font-family: var(--mono);
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .card-value {
+            font-family: var(--mono);
+            font-size: 13px;
+            color: var(--text-primary);
+            word-break: break-all;
+        }
+
+        /* ── CTA ── */
+        .cta-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .cta-hint {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .btn-open {
+            font-family: var(--sans);
+            font-size: 14px;
+            font-weight: 500;
+            color: #fff;
+            background: var(--accent);
+            border: none;
+            border-radius: 8px;
+            padding: 10px 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: opacity 0.15s;
+        }
+
+        .btn-open:hover { opacity: 0.88; }
+        .btn-open:active { opacity: 0.75; }
+
+        .btn-open svg {
+            width: 14px;
+            height: 14px;
+            stroke: #fff;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* ── Footer ── */
+        footer {
+            grid-area: footer;
+            border-top: 1px solid var(--border);
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        .footer-item {
+            font-family: var(--mono);
+            font-size: 11px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .footer-item span {
+            color: var(--text-secondary);
+        }
+
+        .sep {
+            width: 1px;
+            height: 12px;
+            background: var(--border);
+        }
+
+        /* ── Grid bg ── */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(var(--border) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 48px 48px;
+            pointer-events: none;
+            z-index: 0;
+            mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
+        }
+
+        header, main, footer { position: relative; z-index: 1; }
+
+        @media (max-width: 600px) {
+            header { padding: 0 16px; }
+            .cards { grid-template-columns: 1fr 1fr; }
         }
     </style>
 </head>
 <body>
-    <div class="center">
-        <h1>Привет! Это страница для тестирования чатов хелпдеска</h1>
+
+<header>
+    <div class="logo">
+        <div class="logo-icon">
+            <svg viewBox="0 0 16 16"><path d="M2 5h12M2 8h8M2 11h5"/><rect x="1" y="2" width="14" height="12" rx="2"/></svg>
+        </div>
+        <span class="logo-name">helpdesk<span>/</span>tester</span>
+    </div>
+    <div class="header-badge">
+        <span class="dot"></span>
+        ready
+    </div>
+</header>
+
+<main>
+    <div class="hero">
+        <div class="hero-eyebrow">Helpdesk Chat Tester</div>
+        <h1 class="hero-title">Откройте чат<br>и начните <em>тестировать</em></h1>
+        <p class="hero-sub">Страница генерирует уникального тестового пользователя и передаёт его данные в виджет чата. Каждая сессия изолирована.</p>
     </div>
 
-    <!-- Основная логика пользователя -->
-    <script src="./app.js"></script>
+    <div class="cards" id="cards">
+        <div class="card">
+            <div class="card-icon blue">
+                <svg viewBox="0 0 16 16"><circle cx="8" cy="6" r="3"/><path d="M2 14c0-3.31 2.69-6 6-6s6 2.69 6 6"/></svg>
+            </div>
+            <div class="card-label">User ID</div>
+            <div class="card-value" id="uid">—</div>
+        </div>
+        <div class="card">
+            <div class="card-icon green">
+                <svg viewBox="0 0 16 16"><path d="M2 4h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4z"/><path d="M5 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/></svg>
+            </div>
+            <div class="card-label">Email</div>
+            <div class="card-value" id="uemail">—</div>
+        </div>
+        <div class="card">
+            <div class="card-icon amber">
+                <svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="2"/><path d="M5 8h6M5 5h3M5 11h4"/></svg>
+            </div>
+            <div class="card-label">Session</div>
+            <div class="card-value" id="usess">—</div>
+        </div>
+    </div>
 
-    <!-- Скрипты чатов (Intercom, Zendesk и др.) -->
-    <script src="./chats.js"></script>
+    <div class="cta-area">
+        <button class="btn-open" onclick="window.Intercom && window.Intercom('show')">
+            <svg viewBox="0 0 16 16"><path d="M14 2H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h3l3 3 3-3h3a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1z"/></svg>
+            Открыть чат
+        </button>
+        <div class="cta-hint">или нажмите на виджет в углу экрана</div>
+    </div>
+</main>
+
+<footer>
+    <div class="footer-item">env <span>testing</span></div>
+    <div class="sep"></div>
+    <div class="footer-item">chat <span id="chat-platform">intercom</span></div>
+    <div class="sep"></div>
+    <div class="footer-item">storage <span>localStorage</span></div>
+</footer>
+
+<script src="./app.js"></script>
+<script>
+    (function() {
+        var u = window.helpdeskUser;
+        if (!u) return;
+        document.getElementById('uid').textContent = u.id;
+        document.getElementById('uemail').textContent = u.email;
+        var d = new Date(u.createdAt * 1000);
+        document.getElementById('usess').textContent =
+            d.toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit', second:'2-digit'}) +
+            ' · новая';
+        if (localStorage.getItem('intercom_user_id') !== u.id) {
+            document.getElementById('usess').textContent =
+                document.getElementById('usess').textContent.replace('· новая', '· существующая');
+        }
+    })();
+</script>
+<script src="./chats.js"></script>
 
 </body>
 </html>
