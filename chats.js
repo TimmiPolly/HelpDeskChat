@@ -15,7 +15,7 @@ if (!window.helpdeskUser) {
 } else {
     window.intercomSettings = {
         api_base: "https://api-iam.intercom.io",
-        app_id: "n571sxh5",
+        app_id: "e7s8lh5w",
         user_id: window.helpdeskUser.id,
         name: window.helpdeskUser.name,
         email: window.helpdeskUser.email,
@@ -51,7 +51,7 @@ if (!window.helpdeskUser) {
             var s = d.createElement('script');
             s.type = 'text/javascript';
             s.async = true;
-            s.src = 'https://widget.intercom.io/widget/n571sxh5';
+            s.src = 'https://widget.intercom.io/widget/e7s8lh5w';
             s.onload = function() {
                 if (w.Intercom && w.intercomSettings) {
                     w.Intercom('update', w.intercomSettings);
