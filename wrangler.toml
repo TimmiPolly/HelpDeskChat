@@ -1,4 +1,4 @@
-name = "helpdesk-tester"           # ← Измени на то, что ожидает CI!
+name = "chat"           # ← Измени на то, что ожидает CI!
 main = "worker.js"
 compatibility_date = "2026-04-10"
 compatibility_flags = ["nodejs_compat"]
