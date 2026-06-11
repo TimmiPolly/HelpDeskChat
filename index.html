@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тестирование чатов</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .center {
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="center">
+        <h1>Привет! Это страница для тестирования чатов хелпдеска</h1>
+    </div>
+
+    <!-- Основная логика пользователя -->
+    <script src="./app.js"></script>
+
+    <!-- Скрипты чатов (Intercom, Zendesk и др.) -->
+    <script src="./chats.js"></script>
+
+</body>
+</html>
