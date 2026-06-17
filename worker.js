@@ -87,6 +87,10 @@ async function getHTML() {
             box-shadow: 0 6px 20px rgba(0,0,0,0.2);
         }
 
+        .reset-btn:active {
+            transform: translateY(0);
+        }
+
         .user-info {
             margin-top: 20px;
             padding: 15px;
@@ -97,6 +101,8 @@ async function getHTML() {
             font-size: 0.9rem;
             text-align: left;
             max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .user-info p {
@@ -105,6 +111,17 @@ async function getHTML() {
 
         .user-info strong {
             color: #ffd700;
+        }
+
+        .chat-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 6px 16px;
+            border-radius: 20px;
+            color: white;
+            font-size: 0.85rem;
+            margin-top: 15px;
         }
 
         @media (max-width: 768px) {
@@ -118,6 +135,8 @@ async function getHTML() {
     <div class="center">
         <h1>Привет! Это страница для тестирования чатов хелпдеска</h1>
         
+        <div class="chat-badge">💬 UpService Messenger</div>
+        
         <button class="reset-btn" id="resetChatBtn">
             🔄 Сбросить чат и начать новый сеанс
         </button>
@@ -130,6 +149,9 @@ async function getHTML() {
         </div>
     </div>
 
+    <!-- UpService Widget -->
+    <script type="text/javascript" async src="https://messenger.upservice.io/api/widget/a8e5cea9-2df6-49c8-a354-332a4ad6adce"></script>
+    
     <script src="app.js"></script>
     <script src="chats.js"></script>
 </body>
@@ -137,49 +159,47 @@ async function getHTML() {
 }
 
 async function getAppJS() {
-    return `// app.js — Основная логика: генерация и хранение данных пользователя
-
-(function () {
+    return `(function () {
     try {
-        let userId = localStorage.getItem('intercom_user_id');
-        let userName = localStorage.getItem('intercom_user_name');
-        let userEmail = localStorage.getItem('intercom_user_email');
-        let userCreatedAt = localStorage.getItem('intercom_created_at');
+        let userId = localStorage.getItem('helpdesk_user_id');
+        let userName = localStorage.getItem('helpdesk_user_name');
+        let userEmail = localStorage.getItem('helpdesk_user_email');
+        let userCreatedAt = localStorage.getItem('helpdesk_created_at');
 
         if (userId && (typeof userId !== 'string' || userId.trim() === '')) {
             userId = null;
         }
 
         if (!userId) {
-            userId = 'test_' + Date.now() + '_' + Math.random().toString(36).substring(2, 11);
-            localStorage.setItem('intercom_user_id', userId);
+            userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substring(2, 11);
+            localStorage.setItem('helpdesk_user_id', userId);
 
             userCreatedAt = Math.floor(Date.now() / 1000);
-            localStorage.setItem('intercom_created_at', userCreatedAt);
+            localStorage.setItem('helpdesk_created_at', userCreatedAt);
 
             userName = "Тестировщик";
-            localStorage.setItem('intercom_user_name', userName);
+            localStorage.setItem('helpdesk_user_name', userName);
 
             userEmail = 'test_' + userId + '@helpdesk.test';
-            localStorage.setItem('intercom_user_email', userEmail);
+            localStorage.setItem('helpdesk_user_email', userEmail);
         } else {
-            userName = localStorage.getItem('intercom_user_name');
+            userName = localStorage.getItem('helpdesk_user_name');
             if (!userName || typeof userName !== 'string' || userName.trim() === '') {
                 userName = "Тестировщик";
-                localStorage.setItem('intercom_user_name', userName);
+                localStorage.setItem('helpdesk_user_name', userName);
             }
             
-            userEmail = localStorage.getItem('intercom_user_email');
+            userEmail = localStorage.getItem('helpdesk_user_email');
             if (!userEmail || typeof userEmail !== 'string' || userEmail.trim() === '') {
                 userEmail = 'test_' + userId + '@helpdesk.test';
-                localStorage.setItem('intercom_user_email', userEmail);
+                localStorage.setItem('helpdesk_user_email', userEmail);
             }
             
-            userCreatedAt = localStorage.getItem('intercom_created_at');
+            userCreatedAt = localStorage.getItem('helpdesk_created_at');
             let createdAtNum = parseInt(userCreatedAt, 10);
             if (isNaN(createdAtNum) || createdAtNum <= 0) {
                 userCreatedAt = Math.floor(Date.now() / 1000);
-                localStorage.setItem('intercom_created_at', userCreatedAt);
+                localStorage.setItem('helpdesk_created_at', userCreatedAt);
             }
         }
 
@@ -211,8 +231,14 @@ async function getAppJS() {
         window.resetChat = function() {
             if (confirm('Вы уверены? Это очистит данные текущего чата и начнёт новый сеанс.')) {
                 const keysToRemove = [
+                    'helpdesk_user_id',
+                    'helpdesk_user_name', 
+                    'helpdesk_user_email',
+                    'helpdesk_created_at',
+                    'upservice_session',
+                    'upservice_user',
                     'intercom_user_id',
-                    'intercom_user_name', 
+                    'intercom_user_name',
                     'intercom_user_email',
                     'intercom_created_at',
                     'Intercom.identity',
@@ -227,10 +253,20 @@ async function getAppJS() {
                 sessionStorage.clear();
                 
                 document.cookie.split(";").forEach(function(c) {
-                    if (c.trim().startsWith('intercom')) {
+                    if (c.trim().startsWith('upservice') || c.trim().startsWith('intercom')) {
                         document.cookie = c.trim() + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
                     }
                 });
+                
+                const upserviceScript = document.querySelector('script[src*="messenger.upservice.io"]');
+                if (upserviceScript) {
+                    upserviceScript.remove();
+                }
+                
+                const upserviceFrame = document.querySelector('iframe[src*="upservice"]');
+                if (upserviceFrame) {
+                    upserviceFrame.remove();
+                }
                 
                 if (window.Intercom) {
                     try {
@@ -271,26 +307,53 @@ async function getAppJS() {
 }
 
 async function getChatsJS() {
-    return `// chats.js — Скрипты установки чатов хелпдеска
+    return `console.log('✅ UpService чат загружен!');
 
-function initIntercom() {
-    if (!window.helpdeskUser) {
-        console.error('helpdeskUser not initialized!');
-        return;
+function initUpService() {
+    if (window.helpdeskUser) {
+        window.__upservice_user = {
+            id: window.helpdeskUser.id,
+            name: window.helpdeskUser.name,
+            email: window.helpdeskUser.email
+        };
+        
+        document.dispatchEvent(new CustomEvent('upservice:userReady', {
+            detail: window.helpdeskUser
+        }));
+        
+        console.log('📤 UpService user data sent:', window.helpdeskUser.name);
     }
+}
 
-    window.intercomSettings = {
-        api_base: "https://api-iam.intercom.io",
-        app_id: "e7s8lh5w",
-        user_id: window.helpdeskUser.id,
-        name: window.helpdeskUser.name,
-        email: window.helpdeskUser.email,
-        created_at: window.helpdeskUser.createdAt,
-        custom_attributes: {
-            platform: "web",
-            version: "1.0"
-        }
-    };
+function waitForUpService() {
+    if (window.UpService || window.upservice) {
+        console.log('✅ UpService API готов');
+        initUpService();
+    } else {
+        document.addEventListener('upservice:loaded', function() {
+            console.log('✅ UpService загружен через событие');
+            initUpService();
+        });
+        
+        const observer = new MutationObserver(function(mutations) {
+            if (window.UpService || window.upservice) {
+                console.log('✅ UpService обнаружен MutationObserver');
+                initUpService();
+                observer.disconnect();
+            }
+        });
+        
+        observer.observe(document, { 
+            childList: true, 
+            subtree: true,
+            script: true
+        });
+        
+        setTimeout(() => {
+            observer.disconnect();
+            console.warn('⏰ UpService не загрузился за 10 секунд');
+        }, 10000);
+    }
 }
 
 function waitForHelpdeskUser(callback) {
@@ -302,54 +365,17 @@ function waitForHelpdeskUser(callback) {
 }
 
 waitForHelpdeskUser(() => {
-    initIntercom();
-    
-    (function() {
-        var w = window;
-        var ic = w.Intercom;
-        
-        if (typeof ic === "function") {
-            ic('reattach_activator');
-            if (w.intercomSettings) {
-                ic('update', w.intercomSettings);
+    waitForUpService();
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    if (window.UpService || window.upservice) {
+        setTimeout(() => {
+            if (window.helpdeskUser) {
+                initUpService();
             }
-        } else {
-            var d = document;
-            var i = function() { 
-                i.c(arguments); 
-            };
-            i.q = [];
-            i.c = function(args) { 
-                i.q.push(args); 
-            };
-            w.Intercom = i;
-            
-            var l = function() {
-                var s = d.createElement('script');
-                s.type = 'text/javascript';
-                s.async = true;
-                s.src = 'https://widget.intercom.io/widget/e7s8lh5w';
-                s.onload = function() {
-                    if (w.Intercom && w.intercomSettings) {
-                        w.Intercom('update', w.intercomSettings);
-                    }
-                };
-                s.onerror = function() {
-                    console.error('Failed to load Intercom widget');
-                };
-                var x = d.getElementsByTagName('script')[0];
-                x.parentNode.insertBefore(s, x);
-            };
-            
-            if (document.readyState === 'complete' || document.readyState === 'interactive') {
-                setTimeout(l, 0);
-            } else {
-                w.addEventListener('load', l, false);
-            }
-        }
-    })();
-    
-    console.log('Intercom initialized with user:', window.helpdeskUser.name);
+        }, 1000);
+    }
 });
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -357,5 +383,27 @@ document.addEventListener('DOMContentLoaded', function() {
     if (resetBtn && window.resetChat) {
         resetBtn.addEventListener('click', window.resetChat);
     }
-});`;
+});
+
+document.addEventListener('upservice:message', function(e) {
+    console.log('💬 Сообщение UpService:', e.detail);
+});
+
+document.addEventListener('upservice:chat:open', function(e) {
+    console.log('🔄 Чат UpService открыт');
+});
+
+document.addEventListener('upservice:chat:close', function(e) {
+    console.log('❌ Чат UpService закрыт');
+});
+
+function sendToUpService(action, data) {
+    if (window.UpService && typeof window.UpService.send === 'function') {
+        window.UpService.send(action, data);
+    } else if (window.upservice && typeof window.upservice.send === 'function') {
+        window.upservice.send(action, data);
+    } else {
+        console.warn('⚠️ UpService API не доступен для отправки');
+    }
+}`;
 }
