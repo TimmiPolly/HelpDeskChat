@@ -63,12 +63,10 @@
         function displayUserInfo() {
             const userInfoDiv = document.getElementById('userInfo');
             if (userInfoDiv && window.helpdeskUser) {
-                const date = new Date(window.helpdeskUser.createdAt * 1000);
                 userInfoDiv.innerHTML = `
-                    <p><strong>🆔 ID:</strong> ${window.helpdeskUser.id}</p>
-                    <p><strong>👤 Имя:</strong> ${window.helpdeskUser.name}</p>
-                    <p><strong>📧 Email:</strong> ${window.helpdeskUser.email}</p>
-                    <p><strong>📅 Создан:</strong> ${date.toLocaleString()}</p>
+                    <div><strong>ID</strong> <span class="value">${window.helpdeskUser.id}</span></div>
+                    <div><strong>Имя</strong> <span class="value">${window.helpdeskUser.name}</span></div>
+                    <div><strong>Email</strong> <span class="value">${window.helpdeskUser.email}</span></div>
                 `;
             }
         }
@@ -104,18 +102,31 @@
                 
                 // Удаляем куки
                 document.cookie.split(";").forEach(function(c) {
-                    if (c.trim().startsWith('upservice') || c.trim().startsWith('intercom')) {
+                    if (c.trim().startsWith('upservice') || 
+                        c.trim().startsWith('intercom') ||
+                        c.trim().startsWith('happydesk')) {
                         document.cookie = c.trim() + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
                     }
                 });
                 
-                // Удаляем скрипт UpService из DOM
+                // Удаляем скрипт HappyDesk из DOM
+                const happydeskScript = document.querySelector('script[src*="happydesk.ru"]');
+                if (happydeskScript) {
+                    happydeskScript.remove();
+                }
+                
+                // Удаляем iframe HappyDesk
+                const happydeskFrame = document.querySelector('iframe[src*="happydesk"]');
+                if (happydeskFrame) {
+                    happydeskFrame.remove();
+                }
+                
+                // Удаляем UpService
                 const upserviceScript = document.querySelector('script[src*="messenger.upservice.io"]');
                 if (upserviceScript) {
                     upserviceScript.remove();
                 }
                 
-                // Удаляем iframe UpService
                 const upserviceFrame = document.querySelector('iframe[src*="upservice"]');
                 if (upserviceFrame) {
                     upserviceFrame.remove();

@@ -4,7 +4,6 @@ export default {
     async fetch(request, env, ctx) {
         const url = new URL(request.url);
         
-        // Маршрутизация
         if (url.pathname === '/' || url.pathname === '/index.html') {
             const html = await getHTML();
             return new Response(html, {
@@ -36,7 +35,7 @@ async function getHTML() {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Тестирование чатов хелпдеска</title>
+    <title>Тестирование чатов</title>
     <style>
         * {
             margin: 0;
@@ -46,114 +45,154 @@ async function getHTML() {
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            position: relative;
-        }
-
-        .center {
-            text-align: center;
+            background: #f5f0eb;
             padding: 20px;
         }
 
+        .card {
+            background: #ffffff;
+            border-radius: 32px;
+            padding: 50px 40px 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 8px 40px rgba(180, 160, 150, 0.15);
+            text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        .icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            display: block;
+        }
+
         h1 {
-            font-size: 3rem;
-            color: white;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            font-size: 1.6rem;
             font-weight: 600;
-            margin-bottom: 30px;
+            color: #4a3f3a;
+            margin-bottom: 8px;
+            letter-spacing: -0.3px;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: #a09088;
+            margin-bottom: 28px;
+            line-height: 1.5;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #f0ebe6;
+            color: #7a6b62;
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-bottom: 28px;
         }
 
         .reset-btn {
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-            color: white;
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: #e8e0da;
+            color: #5a4f48;
+            border: none;
             padding: 12px 32px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            border-radius: 50px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            border-radius: 40px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.25s;
+            width: 100%;
+            max-width: 280px;
         }
 
         .reset-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+            background: #ddd4cc;
+            transform: scale(1.01);
         }
 
         .reset-btn:active {
-            transform: translateY(0);
+            transform: scale(0.97);
         }
 
         .user-info {
-            margin-top: 20px;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
+            margin-top: 28px;
+            padding: 20px 18px;
+            background: #f8f5f2;
             border-radius: 20px;
-            color: white;
-            font-size: 0.9rem;
             text-align: left;
-            max-width: 400px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .user-info p {
-            margin: 5px 0;
+            font-size: 0.85rem;
+            color: #5a4f48;
+            line-height: 1.8;
         }
 
         .user-info strong {
-            color: #ffd700;
-        }
-
-        .chat-badge {
+            color: #8a7a70;
+            font-weight: 600;
             display: inline-block;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            padding: 6px 16px;
-            border-radius: 20px;
-            color: white;
-            font-size: 0.85rem;
-            margin-top: 15px;
+            width: 60px;
         }
 
-        @media (max-width: 768px) {
+        .user-info .value {
+            color: #4a3f3a;
+            word-break: break-all;
+        }
+
+        .footer-note {
+            margin-top: 20px;
+            font-size: 0.75rem;
+            color: #c5b8b0;
+            letter-spacing: 0.2px;
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 32px 20px 28px;
+                border-radius: 24px;
+            }
+
             h1 {
-                font-size: 1.8rem;
+                font-size: 1.3rem;
+            }
+
+            .reset-btn {
+                font-size: 0.9rem;
+                padding: 10px 24px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="center">
-        <h1>Привет! Это страница для тестирования чатов хелпдеска</h1>
-        
-        <div class="chat-badge">💬 UpService Messenger</div>
-        
-        <button class="reset-btn" id="resetChatBtn">
-            🔄 Сбросить чат и начать новый сеанс
-        </button>
-        
+
+    <div class="card">
+        <span class="icon">💬</span>
+        <h1>Тестирование чатов</h1>
+        <p class="subtitle">Проверьте работу виджета поддержки</p>
+
+        <div class="badge">HappyDesk Messenger</div>
+
+        <button class="reset-btn" id="resetChatBtn">⟳ Сбросить сеанс</button>
+
         <div class="user-info" id="userInfo">
-            <p><strong>🆔 ID:</strong> Загрузка...</p>
-            <p><strong>👤 Имя:</strong> Загрузка...</p>
-            <p><strong>📧 Email:</strong> Загрузка...</p>
-            <p><strong>📅 Создан:</strong> Загрузка...</p>
+            <div><strong>ID</strong> <span class="value">—</span></div>
+            <div><strong>Имя</strong> <span class="value">—</span></div>
+            <div><strong>Email</strong> <span class="value">—</span></div>
         </div>
+
+        <div class="footer-note">Данные хранятся локально</div>
     </div>
 
-    <!-- UpService Widget -->
-    <script type="text/javascript" async src="https://messenger.upservice.io/api/widget/a8e5cea9-2df6-49c8-a354-332a4ad6adce"></script>
-    
     <script src="app.js"></script>
     <script src="chats.js"></script>
+
 </body>
 </html>`;
 }
@@ -218,12 +257,10 @@ async function getAppJS() {
         function displayUserInfo() {
             const userInfoDiv = document.getElementById('userInfo');
             if (userInfoDiv && window.helpdeskUser) {
-                const date = new Date(window.helpdeskUser.createdAt * 1000);
                 userInfoDiv.innerHTML = \`
-                    <p><strong>🆔 ID:</strong> \${window.helpdeskUser.id}</p>
-                    <p><strong>👤 Имя:</strong> \${window.helpdeskUser.name}</p>
-                    <p><strong>📧 Email:</strong> \${window.helpdeskUser.email}</p>
-                    <p><strong>📅 Создан:</strong> \${date.toLocaleString()}</p>
+                    <div><strong>ID</strong> <span class="value">\${window.helpdeskUser.id}</span></div>
+                    <div><strong>Имя</strong> <span class="value">\${window.helpdeskUser.name}</span></div>
+                    <div><strong>Email</strong> <span class="value">\${window.helpdeskUser.email}</span></div>
                 \`;
             }
         }
@@ -253,10 +290,22 @@ async function getAppJS() {
                 sessionStorage.clear();
                 
                 document.cookie.split(";").forEach(function(c) {
-                    if (c.trim().startsWith('upservice') || c.trim().startsWith('intercom')) {
+                    if (c.trim().startsWith('upservice') || 
+                        c.trim().startsWith('intercom') ||
+                        c.trim().startsWith('happydesk')) {
                         document.cookie = c.trim() + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
                     }
                 });
+                
+                const happydeskScript = document.querySelector('script[src*="happydesk.ru"]');
+                if (happydeskScript) {
+                    happydeskScript.remove();
+                }
+                
+                const happydeskFrame = document.querySelector('iframe[src*="happydesk"]');
+                if (happydeskFrame) {
+                    happydeskFrame.remove();
+                }
                 
                 const upserviceScript = document.querySelector('script[src*="messenger.upservice.io"]');
                 if (upserviceScript) {
@@ -307,38 +356,51 @@ async function getAppJS() {
 }
 
 async function getChatsJS() {
-    return `console.log('✅ UpService чат загружен!');
+    return `console.log('✅ HappyDesk чат загружается...');
 
-function initUpService() {
-    if (window.helpdeskUser) {
-        window.__upservice_user = {
+function initHappyDesk() {
+    if (!window.helpdeskUser) {
+        console.warn('⚠️ helpdeskUser не найден, ждём...');
+        return;
+    }
+
+    if (typeof Happydesk !== 'undefined' && Happydesk.initChat) {
+        console.log('✅ HappyDesk уже загружен, инициализируем с пользователем:', window.helpdeskUser.name);
+        
+        window.HAPPYDESK_USER = {
             id: window.helpdeskUser.id,
             name: window.helpdeskUser.name,
-            email: window.helpdeskUser.email
+            email: window.helpdeskUser.email,
+            created_at: window.helpdeskUser.createdAt
         };
-        
-        document.dispatchEvent(new CustomEvent('upservice:userReady', {
-            detail: window.helpdeskUser
-        }));
-        
-        console.log('📤 UpService user data sent:', window.helpdeskUser.name);
-    }
-}
 
-function waitForUpService() {
-    if (window.UpService || window.upservice) {
-        console.log('✅ UpService API готов');
-        initUpService();
+        try {
+            Happydesk.initChat({
+                clientId: 8864,
+                server: 'https://61hd2-widget.happydesk.ru',
+                host: 'neocrypto.happydesk.ru'
+            }, {
+                page_url: window.location.href,
+                user_agent: window.navigator.userAgent,
+                language: 'ru',
+                user: {
+                    id: window.helpdeskUser.id,
+                    name: window.helpdeskUser.name,
+                    email: window.helpdeskUser.email
+                }
+            });
+            
+            console.log('🎉 HappyDesk инициализирован с пользователем:', window.helpdeskUser.name);
+        } catch (error) {
+            console.error('❌ Ошибка инициализации HappyDesk:', error);
+        }
     } else {
-        document.addEventListener('upservice:loaded', function() {
-            console.log('✅ UpService загружен через событие');
-            initUpService();
-        });
+        console.log('⏳ Ждём загрузку HappyDesk...');
         
         const observer = new MutationObserver(function(mutations) {
-            if (window.UpService || window.upservice) {
-                console.log('✅ UpService обнаружен MutationObserver');
-                initUpService();
+            if (typeof Happydesk !== 'undefined' && Happydesk.initChat) {
+                console.log('✅ HappyDesk обнаружен, инициализируем...');
+                initHappyDesk();
                 observer.disconnect();
             }
         });
@@ -351,9 +413,35 @@ function waitForUpService() {
         
         setTimeout(() => {
             observer.disconnect();
-            console.warn('⏰ UpService не загрузился за 10 секунд');
+            console.warn('⏰ HappyDesk не загрузился за 10 секунд');
         }, 10000);
     }
+}
+
+function loadHappyDesk() {
+    if (document.querySelector('script[src*="happydesk.ru/widget.js"]')) {
+        console.log('✅ Скрипт HappyDesk уже загружен');
+        initHappyDesk();
+        return;
+    }
+
+    console.log('📥 Загружаем HappyDesk...');
+    
+    var script = document.createElement('script');
+    script.src = 'https://61hd2-widget.happydesk.ru/widget.js';
+    script.charset = 'utf-8';
+    script.async = true;
+    
+    script.onload = function() {
+        console.log('✅ HappyDesk скрипт загружен');
+        setTimeout(initHappyDesk, 100);
+    };
+    
+    script.onerror = function() {
+        console.error('❌ Ошибка загрузки HappyDesk');
+    };
+    
+    document.head.appendChild(script);
 }
 
 function waitForHelpdeskUser(callback) {
@@ -365,16 +453,15 @@ function waitForHelpdeskUser(callback) {
 }
 
 waitForHelpdeskUser(() => {
-    waitForUpService();
+    console.log('👤 Пользователь готов, загружаем HappyDesk');
+    loadHappyDesk();
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-    if (window.UpService || window.upservice) {
-        setTimeout(() => {
-            if (window.helpdeskUser) {
-                initUpService();
-            }
-        }, 1000);
+    const existingScript = document.querySelector('script[src*="happydesk.ru/widget.js"]');
+    if (existingScript && typeof Happydesk !== 'undefined') {
+        console.log('✅ HappyDesk уже загружен через HTML');
+        initHappyDesk();
     }
 });
 
@@ -385,25 +472,21 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-document.addEventListener('upservice:message', function(e) {
-    console.log('💬 Сообщение UpService:', e.detail);
+document.addEventListener('happydesk:ready', function(e) {
+    console.log('🔄 HappyDesk готов к работе');
 });
 
-document.addEventListener('upservice:chat:open', function(e) {
-    console.log('🔄 Чат UpService открыт');
+document.addEventListener('happydesk:message', function(e) {
+    console.log('💬 Новое сообщение в HappyDesk:', e.detail);
 });
 
-document.addEventListener('upservice:chat:close', function(e) {
-    console.log('❌ Чат UpService закрыт');
+document.addEventListener('happydesk:chat:open', function(e) {
+    console.log('🔄 Чат HappyDesk открыт');
 });
 
-function sendToUpService(action, data) {
-    if (window.UpService && typeof window.UpService.send === 'function') {
-        window.UpService.send(action, data);
-    } else if (window.upservice && typeof window.upservice.send === 'function') {
-        window.upservice.send(action, data);
-    } else {
-        console.warn('⚠️ UpService API не доступен для отправки');
-    }
-}`;
+document.addEventListener('happydesk:chat:close', function(e) {
+    console.log('❌ Чат HappyDesk закрыт');
+});
+
+console.log('✅ chats.js загружен');`;
 }
