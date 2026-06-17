@@ -1,49 +1,61 @@
 // chats.js — Скрипты установки чатов хелпдеска
 
 // =============================================================================
-// UPSERVICE CHAT
+// HAPPYDESK CHAT
 // =============================================================================
 
-console.log('✅ UpService чат загружен!');
+console.log('✅ HappyDesk чат загружается...');
 
-// Функция для передачи данных пользователя в UpService
-function initUpService() {
-    if (window.helpdeskUser) {
-        // Если у UpService есть API для авторизации пользователя
-        // Можно использовать события или глобальные переменные
-        window.__upservice_user = {
+// Функция для инициализации HappyDesk с данными пользователя
+function initHappyDesk() {
+    if (!window.helpdeskUser) {
+        console.warn('⚠️ helpdeskUser не найден, ждём...');
+        return;
+    }
+
+    // Проверяем, загружен ли уже HappyDesk
+    if (typeof Happydesk !== 'undefined' && Happydesk.initChat) {
+        console.log('✅ HappyDesk уже загружен, инициализируем с пользователем:', window.helpdeskUser.name);
+        
+        // Передаём данные пользователя в HappyDesk
+        // Используем глобальную переменную для данных пользователя
+        window.HAPPYDESK_USER = {
             id: window.helpdeskUser.id,
             name: window.helpdeskUser.name,
-            email: window.helpdeskUser.email
+            email: window.helpdeskUser.email,
+            created_at: window.helpdeskUser.createdAt
         };
-        
-        // Отправляем событие о готовности пользователя
-        document.dispatchEvent(new CustomEvent('upservice:userReady', {
-            detail: window.helpdeskUser
-        }));
-        
-        console.log('📤 UpService user data sent:', window.helpdeskUser.name);
-    }
-}
 
-// Ждём загрузки скрипта UpService
-function waitForUpService() {
-    // Проверяем наличие объекта UpService в глобальной области
-    if (window.UpService || window.upservice) {
-        console.log('✅ UpService API готов');
-        initUpService();
+        // Инициализируем чат с данными пользователя
+        try {
+            Happydesk.initChat({
+                clientId: 8864,
+                server: 'https://61hd2-widget.happydesk.ru',
+                host: 'neocrypto.happydesk.ru'
+            }, {
+                page_url: window.location.href,
+                user_agent: window.navigator.userAgent,
+                language: 'ru',
+                // Дополнительные данные пользователя
+                user: {
+                    id: window.helpdeskUser.id,
+                    name: window.helpdeskUser.name,
+                    email: window.helpdeskUser.email
+                }
+            });
+            
+            console.log('🎉 HappyDesk инициализирован с пользователем:', window.helpdeskUser.name);
+        } catch (error) {
+            console.error('❌ Ошибка инициализации HappyDesk:', error);
+        }
     } else {
-        // Слушаем событие загрузки скрипта
-        document.addEventListener('upservice:loaded', function() {
-            console.log('✅ UpService загружен через событие');
-            initUpService();
-        });
+        console.log('⏳ Ждём загрузку HappyDesk...');
         
-        // Или проверяем через MutationObserver
+        // Слушаем событие загрузки скрипта HappyDesk
         const observer = new MutationObserver(function(mutations) {
-            if (window.UpService || window.upservice) {
-                console.log('✅ UpService обнаружен MutationObserver');
-                initUpService();
+            if (typeof Happydesk !== 'undefined' && Happydesk.initChat) {
+                console.log('✅ HappyDesk обнаружен, инициализируем...');
+                initHappyDesk();
                 observer.disconnect();
             }
         });
@@ -57,12 +69,42 @@ function waitForUpService() {
         // Таймаут на случай если не загрузился
         setTimeout(() => {
             observer.disconnect();
-            console.warn('⏰ UpService не загрузился за 10 секунд');
+            console.warn('⏰ HappyDesk не загрузился за 10 секунд');
         }, 10000);
     }
 }
 
-// Ждём helpdeskUser и инициализируем UpService
+// Функция для динамической загрузки HappyDesk
+function loadHappyDesk() {
+    // Проверяем, не загружен ли уже скрипт
+    if (document.querySelector('script[src*="happydesk.ru/widget.js"]')) {
+        console.log('✅ Скрипт HappyDesk уже загружен');
+        initHappyDesk();
+        return;
+    }
+
+    console.log('📥 Загружаем HappyDesk...');
+    
+    // Создаём и загружаем скрипт HappyDesk
+    var script = document.createElement('script');
+    script.src = 'https://61hd2-widget.happydesk.ru/widget.js';
+    script.charset = 'utf-8';
+    script.async = true;
+    
+    script.onload = function() {
+        console.log('✅ HappyDesk скрипт загружен');
+        // Небольшая задержка для инициализации
+        setTimeout(initHappyDesk, 100);
+    };
+    
+    script.onerror = function() {
+        console.error('❌ Ошибка загрузки HappyDesk');
+    };
+    
+    document.head.appendChild(script);
+}
+
+// Ждём helpdeskUser и загружаем HappyDesk
 function waitForHelpdeskUser(callback) {
     if (window.helpdeskUser) {
         callback();
@@ -73,19 +115,17 @@ function waitForHelpdeskUser(callback) {
 
 // Основная инициализация
 waitForHelpdeskUser(() => {
-    // Инициализируем UpService
-    waitForUpService();
+    console.log('👤 Пользователь готов, загружаем HappyDesk');
+    loadHappyDesk();
 });
 
-// Если UpService загрузился до helpdeskUser, передаём данные позже
+// Также проверяем, если скрипт уже загружен в HTML
 document.addEventListener('DOMContentLoaded', function() {
-    // Проверяем загружен ли UpService
-    if (window.UpService || window.upservice) {
-        setTimeout(() => {
-            if (window.helpdeskUser) {
-                initUpService();
-            }
-        }, 1000);
+    // Проверяем, загружен ли скрипт в HTML
+    const existingScript = document.querySelector('script[src*="happydesk.ru/widget.js"]');
+    if (existingScript && typeof Happydesk !== 'undefined') {
+        console.log('✅ HappyDesk уже загружен через HTML');
+        initHappyDesk();
     }
 });
 
@@ -98,29 +138,24 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // =============================================================================
-// ДОПОЛНИТЕЛЬНО: ПЕРЕХВАТ СОБЫТИЙ UPSERVICE
+// ДОПОЛНИТЕЛЬНО: ОБРАБОТЧИКИ СОБЫТИЙ HAPPYDESK
 // =============================================================================
 
-// Если UpService генерирует события, можно их перехватывать
-document.addEventListener('upservice:message', function(e) {
-    console.log('💬 Сообщение UpService:', e.detail);
+// Слушаем события HappyDesk (если они поддерживаются)
+document.addEventListener('happydesk:ready', function(e) {
+    console.log('🔄 HappyDesk готов к работе');
 });
 
-document.addEventListener('upservice:chat:open', function(e) {
-    console.log('🔄 Чат UpService открыт');
+document.addEventListener('happydesk:message', function(e) {
+    console.log('💬 Новое сообщение в HappyDesk:', e.detail);
 });
 
-document.addEventListener('upservice:chat:close', function(e) {
-    console.log('❌ Чат UpService закрыт');
+document.addEventListener('happydesk:chat:open', function(e) {
+    console.log('🔄 Чат HappyDesk открыт');
 });
 
-// Пример работы с API UpService (если доступно)
-function sendToUpService(action, data) {
-    if (window.UpService && typeof window.UpService.send === 'function') {
-        window.UpService.send(action, data);
-    } else if (window.upservice && typeof window.upservice.send === 'function') {
-        window.upservice.send(action, data);
-    } else {
-        console.warn('⚠️ UpService API не доступен для отправки');
-    }
-}
+document.addEventListener('happydesk:chat:close', function(e) {
+    console.log('❌ Чат HappyDesk закрыт');
+});
+
+console.log('✅ chats.js загружен');
